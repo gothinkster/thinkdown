@@ -7,7 +7,6 @@ var gulp = require('gulp');
 var path = require('path');
 var fs = require('fs');
 
-var debug = require('gulp-debug');
 var chalk = require('chalk');
 var livereload = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
@@ -20,11 +19,9 @@ var marked = require('marked');
 var naturalSort = require('gulp-natural-sort');
 var gulpIgnore = require('gulp-ignore');
 var concat = require('gulp-concat');
-
-var customRenderer = require('../lib/custom_renderers.js');
-
 var argv = require('minimist')(process.argv.slice(2));
 
+var customRenderer = require('../lib/custom_renderers.js');
 
 var highlightCss = fs.readFileSync(__dirname+'/../assets/highlight.css', 'utf8');
 var bootstrapCss = fs.readFileSync(__dirname+'/../assets/bootstrap.min.css', 'utf8');

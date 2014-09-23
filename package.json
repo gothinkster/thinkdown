@@ -3,30 +3,45 @@
   "preferGlobal": true,
   "version": "0.1.0",
   "description": "Tool for compiling and viewing Thinkster customized Markdown",
-  "private": true,
+  "keywords": [
+    "thinkster",
+    "thinkdown",
+    "markdown"
+  ],
   "bin": {
     "thinkdown": "./bin/thinkdown"
   },
-  "author": "Matt Green <matt@thinkster.io> (https://thinkster.io)",
+  "author": "Thinkster <hello@thinkster.io> (https://thinkster.io)",
+  "contributors": [
+    {
+      "name": "Matt Green",
+      "email": "matt@thinkster.io"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GoThinkster/thinkdown.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GoThinkster/thinkdown/issues"
+  },
+  "homepage": "https://github.com/GoThinkster/thinkdown",
   "dependencies": {
-    "chalk": "^0.5.1",
     "gulp": "^3.8.8",
     "gulp-concat": "^2.4.1",
-    "gulp-debug": "^1.0.1",
     "gulp-ignore": "^1.2.0",
     "gulp-inject-reload": "0.0.2",
     "gulp-livereload": "^2.1.1",
     "gulp-markdown": "^1.0.0",
     "gulp-natural-sort": "^0.1.0",
     "gulp-tap": "^0.1.1",
-    "gulp-watch": "^1.0.7",
-    "gulp-webserver": "^0.8.1",
     "gulp-wrap": "^0.3.0",
     "highlight.js": "^8.2.0",
     "marked": "^0.3.2",
     "minimist": "^1.1.0",
     "open": "0.0.5"
   },
+  "license": "MIT",
   "engines": {
     "node": ">=0.10.0"
   }
