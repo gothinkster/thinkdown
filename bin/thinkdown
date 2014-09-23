@@ -27,6 +27,7 @@ var argv = require('minimist')(process.argv.slice(2));
 
 
 var highlightCss = fs.readFileSync(__dirname+'/../assets/highlight.css', 'utf8');
+var bootstrapCss = fs.readFileSync(__dirname+'/../assets/bootstrap.min.css', 'utf8');
 
 
 if(argv._.length > 0 ) {
@@ -58,10 +59,13 @@ function buildMarkdown() {
       '<html>',
       '<head>',
       '<style>',highlightCss,'</style>',
+      '<style>',bootstrapCss,'</style>',
       '</head>',
       '<body>',
       '<div class="container">',
+      '<div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 main-content">',
       '<%= contents %>',
+      '</div>',
       '</div>',
       '</body>',
       '</html>',
