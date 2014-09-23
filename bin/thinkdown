@@ -7,7 +7,6 @@ var gulp = require('gulp');
 var path = require('path');
 var fs = require('fs');
 
-var chalk = require('chalk');
 var livereload = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
 var wrap = require('gulp-wrap');
