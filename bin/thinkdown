@@ -45,7 +45,7 @@ http.createServer(function (req, res) {
 
 function buildMarkdown() {
   gulp.src('*.+(md|mdown)')
-    .pipe(gulpIgnore.exclude('README.md'))
+    .pipe(gulpIgnore.exclude('**/README.*'))
     .pipe(naturalSort())
     .pipe(concat('index.html'))
     .pipe(markdown({
