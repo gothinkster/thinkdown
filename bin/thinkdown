@@ -24,6 +24,7 @@ var customRenderer = require('../lib/custom_renderers.js');
 
 var highlightCss = fs.readFileSync(__dirname+'/../assets/highlight.css', 'utf8');
 var bootstrapCss = fs.readFileSync(__dirname+'/../assets/bootstrap.min.css', 'utf8');
+var styles = fs.readFileSync(__dirname+'/../assets/styles.css', 'utf8');
 
 
 if(argv._.length > 0 ) {
@@ -36,7 +37,8 @@ var port = 8000;
 var renderer = new marked.Renderer();
 renderer.code = customRenderer.highlightCode;
 renderer.link = customRenderer.addBlankToLinks;
-renderer.listitem = customRenderer.addCheckboxes;
+renderer.listitem = customRenderer.addListCheckboxes;
+renderer.paragraph = customRenderer.addParagraphCheckboxes;
 
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
