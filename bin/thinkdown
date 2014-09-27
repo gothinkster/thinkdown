@@ -2,10 +2,10 @@
 'use strict';
 
 var http = require('http');
+var staticServer = require('node-static');
 var gulp = require('gulp');
 
 var path = require('path');
-var fs = require('fs');
 
 var livereload = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
@@ -22,11 +22,6 @@ var argv = require('minimist')(process.argv.slice(2));
 
 var customRenderer = require('../lib/custom_renderers.js');
 
-var highlightCss = fs.readFileSync(__dirname+'/../assets/highlight.css', 'utf8');
-var bootstrapCss = fs.readFileSync(__dirname+'/../assets/bootstrap.min.css', 'utf8');
-var styles = fs.readFileSync(__dirname+'/../assets/styles.css', 'utf8');
-
-
 if(argv._.length > 0 ) {
   process.chdir(argv._[0]);
 }
@@ -40,9 +35,15 @@ renderer.link = customRenderer.addBlankToLinks;
 renderer.listitem = customRenderer.addListCheckboxes;
 renderer.paragraph = customRenderer.addParagraphCheckboxes;
 
+var fileServer = new staticServer.Server(__dirname+'/../assets/');
 http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  res.end(htmlBuffer);
+
+  if(req.url === '/') {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end(htmlBuffer);
+  } else {
+    fileServer.serve(req, res);
+  }
 }).listen(port);
 
 function buildMarkdown() {
@@ -53,21 +54,9 @@ function buildMarkdown() {
     .pipe(markdown({
       renderer: renderer
     }))
-    .pipe(wrap([
-      '<html>',
-      '<head>',
-      '<style>',highlightCss,'</style>',
-      '<style>',bootstrapCss,'</style>',
-      '</head>',
-      '<body>',
-      '<div class="container">',
-      '<div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 main-content">',
-      '<%= contents %>',
-      '</div>',
-      '</div>',
-      '</body>',
-      '</html>',
-    ].join('\n')))
+    .pipe(wrap({
+      src: __dirname+'/../assets/index.html',
+    }))
     .pipe(injectReload())
     .pipe(tap(function(file, t) {
       htmlBuffer = file.contents;
