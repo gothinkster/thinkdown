@@ -5,8 +5,6 @@ var http = require('http');
 var staticServer = require('node-static');
 var gulp = require('gulp');
 
-var path = require('path');
-
 var livereload = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
 var wrap = require('gulp-wrap');
@@ -20,7 +18,7 @@ var gulpIgnore = require('gulp-ignore');
 var concat = require('gulp-concat');
 var argv = require('minimist')(process.argv.slice(2));
 
-var customRenderer = require('../lib/custom_renderers.js');
+var customRenderer = require('../lib/public_renderers.js');
 
 if(argv._.length > 0 ) {
   process.chdir(argv._[0]);
@@ -33,7 +31,7 @@ var renderer = new marked.Renderer();
 renderer.code = customRenderer.highlightCode;
 renderer.link = customRenderer.addBlankToLinks;
 renderer.listitem = customRenderer.addListCheckboxes;
-renderer.paragraph = customRenderer.addParagraphCheckboxes;
+// renderer.paragraph = customRenderer.addParagraphCheckboxes;
 
 var fileServer = new staticServer.Server(__dirname+'/../assets/');
 http.createServer(function (req, res) {
