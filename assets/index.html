@@ -1,10 +1,12 @@
 <html>
 <head>
-  <link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <link href="/highlight.css" rel="stylesheet" type="text/css">
-  <link href="/styles.css" rel="stylesheet" type="text/css">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="/styles/highlight.css" rel="stylesheet" type="text/css">
+  <link href="/styles/styles.css" rel="stylesheet" type="text/css">
+
+  <script src="/vendor/angular.min.js"></script>
 </head>
-<body>
+<body ng-app="thinkster">
   <div class="container">
     <div class="row">
       <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 main-content">
@@ -14,5 +16,9 @@
       </div>
     </div>
   </div>
+
+  <script src="/scripts/app.js"></script>
+  <script src="/scripts/checkbox/checkbox.js"></script>
+
 </body>
 </html>
