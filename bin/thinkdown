@@ -30,8 +30,7 @@ var port = 8000;
 var renderer = new marked.Renderer();
 renderer.code = customRenderer.highlightCode;
 renderer.link = customRenderer.addBlankToLinks;
-renderer.listitem = customRenderer.addListCheckboxes;
-// renderer.paragraph = customRenderer.addParagraphCheckboxes;
+renderer.paragraph = customRenderer.addParagraphCheckboxes;
 
 var fileServer = new staticServer.Server(__dirname+'/../assets/');
 http.createServer(function (req, res) {
