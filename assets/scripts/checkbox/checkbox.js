@@ -7,7 +7,9 @@ angular.module('thinkster.checkbox', [])
     templateUrl: '/scripts/checkbox/checkbox.html',
     transclude: true,
     scope: {
-      ngModel: '='
+      array: '=',
+      tutorial: '@',
+      id: '@',
     },
     controller: function($scope) {
 
