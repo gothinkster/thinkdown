@@ -1,70 +1,111 @@
 #!/usr/bin/env node
 'use strict';
 
-var http = require('http');
+var http         = require('http');
 var staticServer = require('node-static');
-var gulp = require('gulp');
+var fs           = require('fs');
+var gulp         = require('gulp');
 
-var livereload = require('gulp-livereload');
+var livereload   = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
-var wrap = require('gulp-wrap');
-var tap = require('gulp-tap');
-var openBrowser = require('open');
+var wrap         = require('gulp-wrap');
+var tap          = require('gulp-tap');
+var openBrowser  = require('open');
 
-var markdown = require('gulp-markdown');
-var marked = require('marked');
+var merge       = require('merge-stream');
+var map         = require('vinyl-map');
+var marked      = require('marked');
 var naturalSort = require('gulp-natural-sort');
-var gulpIgnore = require('gulp-ignore');
-var concat = require('gulp-concat');
-var argv = require('minimist')(process.argv.slice(2));
-
-var customRenderer = require('../lib/public_renderers.js');
+var concat      = require('gulp-concat');
+var renderers   = require('../lib/public');
+var argv        = require('minimist')(process.argv.slice(2));
+var rename      = require('gulp-rename');
 
 if(argv._.length > 0 ) {
   process.chdir(argv._[0]);
 }
 
-var htmlBuffer = '';
+var htmlBuffer = {};
 var port = 8000;
 
-var renderer = new marked.Renderer();
-renderer.code = customRenderer.highlightCode;
-renderer.link = customRenderer.addBlankToLinks;
-renderer.paragraph = customRenderer.addParagraphCheckboxes;
+var courseGlob = [ './*.+(md|mdown)', '!./readme.*' ];
+var moduleGlob = [ './modules/*.+(md|mdown)', '!./readme.*' ];
+
+var courseConfig = JSON.parse(fs.readFileSync('course.json'));
 
 var fileServer = new staticServer.Server(__dirname+'/../assets/');
+
 http.createServer(function (req, res) {
+  var htmlUrl = /\.html$/.test(req.url) ? req.url : req.url + '.html';
 
   if(req.url === '/') {
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end(htmlBuffer);
+    res.end(htmlBuffer['/index.html']);
+  } else if(htmlBuffer.hasOwnProperty(htmlUrl)) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end(htmlBuffer[htmlUrl]);
   } else {
     fileServer.serve(req, res);
   }
 }).listen(port);
 
-function buildMarkdown() {
-  gulp.src('*.+(md|mdown)')
-    .pipe(gulpIgnore.exclude('**/README.*'))
+
+var renderer       = new marked.Renderer();
+renderer.code      = renderers.highlightCode;
+renderer.codespan  = renderers.escapeCodespan;
+renderer.link      = renderers.addBlankToLinks;
+renderer.paragraph = renderers.addParagraphCheckboxes;
+renderer.heading   = renderers.headingPermalink;
+renderer.image     = renderers.image.bind(renderer, '');
+
+function buildMain() {
+  var stream = gulp.src(courseGlob, {nocase: true})
     .pipe(naturalSort())
-    .pipe(concat('index.html'))
-    .pipe(markdown({
-      renderer: renderer
+    .pipe(concat('index.html'));
+
+  buildMarkdown(stream);
+}
+
+function buildModule() {
+  var stream = gulp.src(moduleGlob, {nocase: true})
+    .pipe(rename({extname: '.html', dirname: ''}));
+
+  buildMarkdown(stream);
+}
+
+function buildMarkdown(stream) {
+  stream
+    .pipe(map(function(content, filename) {
+      var markdown = String(content);
+      var html = marked(markdown, {
+        renderer: renderer
+      }).replace(/<\/section>/, '');
+
+      return [
+        html,
+        '</section>'
+      ].join('\n');
     }))
     .pipe(wrap({
       src: __dirname+'/../assets/index.html',
     }))
     .pipe(injectReload())
     .pipe(tap(function(file, t) {
-      htmlBuffer = file.contents;
+      htmlBuffer['/'+file.path] = file.contents;
     }))
     .pipe(livereload());
+
 }
 
-buildMarkdown();
+buildMain();
+buildModule();
 
-gulp.watch('*.+(md|mdown)', function() {
-  buildMarkdown();
+gulp.watch(courseGlob, function() {
+  buildMain();
+});
+
+gulp.watch(moduleGlob, function() {
+  buildModule();
 });
 
 
