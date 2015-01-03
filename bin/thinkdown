@@ -33,7 +33,8 @@ var moduleGlob = [ './modules/*.+(md|mdown)', '!./readme.*' ];
 
 var courseConfig = JSON.parse(fs.readFileSync('course.json'));
 
-var fileServer = new staticServer.Server(__dirname+'/../assets/');
+var assetServer = new staticServer.Server(__dirname+'/../assets/');
+var imageServer = new staticServer.Server('images/');
 
 http.createServer(function (req, res) {
   var htmlUrl = /\.html$/.test(req.url) ? req.url : req.url + '.html';
@@ -44,8 +45,11 @@ http.createServer(function (req, res) {
   } else if(htmlBuffer.hasOwnProperty(htmlUrl)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end(htmlBuffer[htmlUrl]);
+  } else if( /\/images\/course\//.test(req.url) ) {
+    req.url = req.url.replace(/^\/images\/course\//, '');
+    imageServer.serve(req, res);
   } else {
-    fileServer.serve(req, res);
+    assetServer.serve(req, res);
   }
 }).listen(port);
 
@@ -56,7 +60,7 @@ renderer.codespan  = renderers.escapeCodespan;
 renderer.link      = renderers.addBlankToLinks;
 renderer.paragraph = renderers.addParagraphCheckboxes;
 renderer.heading   = renderers.headingPermalink;
-renderer.image     = renderers.image.bind(renderer, '');
+renderer.image     = renderers.image.bind(renderer, 'course');
 
 function buildMain() {
   var stream = gulp.src(courseGlob, {nocase: true})
